@@ -47,56 +47,53 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h1 className="section-title">Dashboard</h1>
-
-      <div className="stat-grid">
-        <div className="stat-card">
-          <div className="stat-label">Money In (this month)</div>
-          <div className="stat-value green">{formatLe(moneyIn)}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Money Out (this month)</div>
-          <div className="stat-value red">{formatLe(moneyOut)}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Profit (this month)</div>
-          <div className={'stat-value ' + (profit >= 0 ? 'green' : 'red')}>
-            {formatLe(profit)}
+      <div className="hero-card">
+        <div className="hero-label">Profit this month</div>
+        <div className="hero-profit">{formatLe(profit)}</div>
+        <div className="hero-row">
+          <div>
+            <div className="hero-stat-label">Money In</div>
+            <div className="hero-stat-value">{formatLe(moneyIn)}</div>
+          </div>
+          <div>
+            <div className="hero-stat-label">Money Out</div>
+            <div className="hero-stat-value">{formatLe(moneyOut)}</div>
           </div>
         </div>
       </div>
 
-      <Link to="/add/money_in" className="btn btn-green" style={{ marginBottom: '0.5rem' }}>
-        + Record money in
-      </Link>
-      <Link to="/add/money_out" className="btn btn-red">
-        + Record money out
-      </Link>
+      <div className="btn-row">
+        <Link to="/add/money_in" className="btn btn-green">
+          + Money in
+        </Link>
+        <Link to="/add/money_out" className="btn btn-rust-outline">
+          + Money out
+        </Link>
+      </div>
 
-      <div style={{ marginTop: '1.5rem' }}>
-        <h2 className="section-title">Recent Transactions</h2>
-        <div className="card">
-          {loading ? (
-            <div className="empty">Loading...</div>
-          ) : recent.length === 0 ? (
-            <div className="empty">No transactions yet. Add your first one above.</div>
-          ) : (
-            recent.map(tx => (
-              <div key={tx.id} className="tx-item">
-                <div>
-                  <div className="tx-desc">{tx.description}</div>
-                  <div className="tx-meta">
-                    {formatDate(tx.date)} · {tx.category}
-                  </div>
-                </div>
-                <div className={'tx-amount ' + (tx.direction === 'money_in' ? 'in' : 'out')}>
-                  {tx.direction === 'money_in' ? '+' : '-'}{formatLe(tx.amount)}
+      <h2 className="section-title">Recent Transactions</h2>
+      {loading ? (
+        <div className="empty">Loading...</div>
+      ) : recent.length === 0 ? (
+        <div className="empty">No transactions yet. Add your first one above.</div>
+      ) : (
+        <div className="tx-list">
+          {recent.map(tx => (
+            <div key={tx.id} className="tx-item">
+              <div className={'tx-dot ' + (tx.direction === 'money_in' ? 'in' : 'out')} />
+              <div className="tx-body">
+                <div className="tx-desc">{tx.description}</div>
+                <div className="tx-meta">
+                  {formatDate(tx.date)} · {tx.category}
                 </div>
               </div>
-            ))
-          )}
+              <div className={'tx-amount ' + (tx.direction === 'money_in' ? 'in' : 'out')}>
+                {tx.direction === 'money_in' ? '+' : '-'}{formatLe(tx.amount)}
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
+      )}
     </div>
   )
 }

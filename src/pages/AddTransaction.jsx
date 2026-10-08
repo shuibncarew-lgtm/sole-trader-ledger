@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { formatLe } from '../lib/format'
@@ -8,7 +8,6 @@ const PAYMENT_METHODS = ['Cash', 'Orange Money', 'Bank']
 
 export default function AddTransaction() {
   const { direction: urlDirection } = useParams()
-  const navigate = useNavigate()
   const { user } = useAuth()
 
   const [direction, setDirection] = useState(urlDirection || 'money_in')
@@ -84,12 +83,10 @@ export default function AddTransaction() {
 
   return (
     <div>
-      <h1 className="section-title">Add Transaction</h1>
-
       <div className="toggle">
         <button
           type="button"
-          className={'toggle-btn' + (direction === 'money_in' ? ' active' : '')}
+          className={'toggle-btn' + (direction === 'money_in' ? ' active in' : '')}
           onClick={() => setDirection('money_in')}
         >
           Money In
@@ -103,15 +100,20 @@ export default function AddTransaction() {
         </button>
       </div>
 
+      <div className="amount-display">
+        <div className="amount-currency">Le</div>
+        <div className="amount-value">{amount || '0'}</div>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <div className="field">
-          <label className="label">Amount (Le)</label>
+          <label className="label">Amount</label>
           <input
             className="input"
             type="number"
             min="1"
             step="1"
-            placeholder="e.g. 350000"
+            placeholder="Enter amount"
             value={amount}
             onChange={e => setAmount(e.target.value)}
           />
@@ -174,7 +176,7 @@ export default function AddTransaction() {
 
         <button
           type="submit"
-          className={'btn ' + (direction === 'money_in' ? 'btn-green' : 'btn-red')}
+          className={'btn ' + (direction === 'money_in' ? 'btn-green' : 'btn-rust-outline')}
           disabled={loading}
         >
           {loading ? 'Saving...' : `Record ${direction === 'money_in' ? 'Money In' : 'Money Out'}`}

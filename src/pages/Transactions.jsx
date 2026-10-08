@@ -3,6 +3,19 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { formatLe, formatDate } from '../lib/format'
 
+function groupByDate(transactions) {
+  const groups = []
+  const map = {}
+  for (const tx of transactions) {
+    if (!map[tx.date]) {
+      map[tx.date] = { date: tx.date, items: [] }
+      groups.push(map[tx.date])
+    }
+    map[tx.date].items.push(tx)
+  }
+  return groups
+}
+
 export default function Transactions() {
   const { user } = useAuth()
   const [transactions, setTransactions] = useState([])
@@ -72,11 +85,11 @@ export default function Transactions() {
     })
   }, [user.id, categoryFilter, dateFrom, dateTo])
 
+  const groups = groupByDate(transactions)
+
   return (
     <div>
-      <h1 className="section-title">All Transactions</h1>
-
-      <div className="card">
+      <div className="filter-group">
         <div className="filter-row">
           <input
             className="input"
@@ -130,27 +143,31 @@ export default function Transactions() {
         </div>
       )}
 
-      <div className="card">
-        {loading ? (
-          <div className="empty">Loading...</div>
-        ) : transactions.length === 0 ? (
-          <div className="empty">No transactions found.</div>
-        ) : (
-          transactions.map(tx => (
-            <div key={tx.id} className="tx-item">
-              <div>
-                <div className="tx-desc">{tx.description}</div>
-                <div className="tx-meta">
-                  {formatDate(tx.date)} · {tx.category}
+      {loading ? (
+        <div className="empty">Loading...</div>
+      ) : transactions.length === 0 ? (
+        <div className="empty">No transactions found.</div>
+      ) : (
+        groups.map(group => (
+          <div key={group.date}>
+            <div className="date-header">{formatDate(group.date)}</div>
+            <div className="tx-list">
+              {group.items.map(tx => (
+                <div key={tx.id} className="tx-item">
+                  <div className={'tx-dot ' + (tx.direction === 'money_in' ? 'in' : 'out')} />
+                  <div className="tx-body">
+                    <div className="tx-desc">{tx.description}</div>
+                    <div className="tx-meta">{tx.category}</div>
+                  </div>
+                  <div className={'tx-amount ' + (tx.direction === 'money_in' ? 'in' : 'out')}>
+                    {tx.direction === 'money_in' ? '+' : '-'}{formatLe(tx.amount)}
+                  </div>
                 </div>
-              </div>
-              <div className={'tx-amount ' + (tx.direction === 'money_in' ? 'in' : 'out')}>
-                {tx.direction === 'money_in' ? '+' : '-'}{formatLe(tx.amount)}
-              </div>
+              ))}
             </div>
-          ))
-        )}
-      </div>
+          </div>
+        ))
+      )}
     </div>
   )
 }

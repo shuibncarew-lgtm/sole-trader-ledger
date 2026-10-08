@@ -103,23 +103,16 @@ export default function Statements() {
 
   return (
     <div>
-      <h1 className="section-title">Financial Statements</h1>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <div className="tabs" style={{ flex: 1, marginBottom: 0 }}>
-          <button className={'tab' + (tab === 'pnl' ? ' active' : '')} onClick={() => setTab('pnl')}>
-            Profit & Loss
-          </button>
-          <button className={'tab' + (tab === 'bs' ? ' active' : '')} onClick={() => setTab('bs')}>
-            What I Own & Owe
-          </button>
-        </div>
-        <button className="btn btn-outline no-print" style={{ width: 'auto', padding: '0.5rem 1rem', marginLeft: '0.5rem' }} onClick={handlePrint}>
-          Print
+      <div className="tabs">
+        <button className={'tab' + (tab === 'pnl' ? ' active' : '')} onClick={() => setTab('pnl')}>
+          Profit & Loss
+        </button>
+        <button className={'tab' + (tab === 'bs' ? ' active' : '')} onClick={() => setTab('bs')}>
+          What I Own & Owe
         </button>
       </div>
 
-      <div className="card no-print">
+      <div className="filter-group no-print">
         <div className="filter-row">
           <input
             className="input"
@@ -145,6 +138,10 @@ export default function Statements() {
       ) : (
         <BalanceStatement bs={balanceSheet} />
       )}
+
+      <button className="btn btn-outline no-print" onClick={handlePrint}>
+        Download PDF
+      </button>
     </div>
   )
 }
@@ -205,7 +202,7 @@ function PnlStatement({ pnl }) {
               <td>
                 Profit for the period
               </td>
-              <td style={{ color: pnl.profit >= 0 ? 'var(--green)' : 'var(--red)' }}>
+              <td style={{ color: pnl.profit >= 0 ? 'var(--green)' : 'var(--rust)' }}>
                 {formatLe(pnl.profit)}
               </td>
             </tr>
@@ -300,7 +297,7 @@ function BalanceStatement({ bs }) {
               <td>
                 {balanced ? 'Balanced' : 'Not Balanced'}
               </td>
-              <td style={{ color: balanced ? 'var(--green)' : 'var(--red)' }}>
+              <td style={{ color: balanced ? 'var(--green)' : 'var(--rust)' }}>
                 {balanced ? '✓' : '✗'}
               </td>
             </tr>
