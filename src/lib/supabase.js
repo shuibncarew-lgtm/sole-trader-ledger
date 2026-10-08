@@ -7,6 +7,17 @@ if (!url || !key) {
   console.warn('Supabase env vars not set — using dev mode')
 }
 
-export const supabase = createClient(url || 'https://placeholder.supabase.co', key || 'placeholder')
+export const supabase = createClient(
+  url || 'https://placeholder.supabase.co',
+  key || 'placeholder',
+  {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce',
+    },
+  },
+)
 
 export const DEV_USER_ID = import.meta.env.VITE_DEV_USER_ID || '00000000-0000-0000-0000-000000000000'
